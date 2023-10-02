@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_clone_app/pages/add_post_page.dart';
+import 'package:instagram_clone_app/pages/signup_page.dart';
+import 'package:instagram_clone_app/resources/auth_methods.dart';
+import 'package:instagram_clone_app/responsive/mobile_screen_layout.dart';
+import 'package:instagram_clone_app/responsive/responsive_layout_screen.dart';
+import 'package:instagram_clone_app/responsive/web_screen_layout.dart';
 import 'package:instagram_clone_app/utils/colors.dart';
 import 'package:instagram_clone_app/widget/text_form_field.dart';
 
@@ -12,6 +18,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -25,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 60),
+          padding: const EdgeInsets.symmetric(horizontal: 50),
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -39,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
                 color: primaryColor,
                 height: 96,
               ),
-              const SizedBox(height: 50),
+              const SizedBox(height: 32),
               CustomTextFormField(
                 textEditingController: _emailController,
                 hintText: "Email adresi",
@@ -54,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 24),
               InkWell(
+                onTap: loginUser,
                 child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,
@@ -66,35 +74,79 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     color: blueColor,
                   ),
-                  child: const Text("Giriş Yap"),
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        )
+                      : const Text("Giriş Yap"),
                 ),
               ),
               const SizedBox(height: 12),
               Flexible(flex: 2, child: Container()),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: const Text("Hesabın yok mu?"),
-                  ),
-                  const SizedBox(width: 5),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: const Text(
-                        "Kaydol",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      child: const Text("Hesabın yok mu?"),
+                    ),
+                    const SizedBox(width: 5),
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignupPage(),
+                        ),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: const Text(
+                          "Kaydol",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               )
             ],
           ),
         ),
       ),
     );
+  }
+
+  void loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthMethods().login(
+        email: _emailController.text, password: _passwordController.text);
+
+    if (res == "success") {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+            webScreenLayout: WebScreenLayout(),
+            mobileScreenLayout: MobileScreenLayout(),
+          ),
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AddPostPage(),
+        ),
+      );
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 }

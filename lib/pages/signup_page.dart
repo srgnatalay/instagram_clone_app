@@ -1,9 +1,14 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:instagram_clone_app/pages/login_page.dart';
 import 'package:instagram_clone_app/resources/auth_methods.dart';
+import 'package:instagram_clone_app/responsive/mobile_screen_layout.dart';
+import 'package:instagram_clone_app/responsive/responsive_layout_screen.dart';
+import 'package:instagram_clone_app/responsive/web_screen_layout.dart';
 import 'package:instagram_clone_app/utils/colors.dart';
 import 'package:instagram_clone_app/utils/utils.dart';
 import 'package:instagram_clone_app/widget/text_form_field.dart';
@@ -67,7 +72,7 @@ class _SignupPageState extends State<SignupPage> {
                               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfZCGFDrC8YeednlJC3mhxPfg_s4Pg8u7-kf6dy88&s"),
                         ),
                   Positioned(
-                    bottom: -10,
+                    bottom: -1,
                     left: 80,
                     child: IconButton(
                       onPressed: selectImage,
@@ -80,7 +85,7 @@ class _SignupPageState extends State<SignupPage> {
                 ],
               ),
               const SizedBox(
-                height: 24,
+                height: 26,
               ),
               CustomTextFormField(
                 textEditingController: _usernameController,
@@ -169,10 +174,31 @@ class _SignupPageState extends State<SignupPage> {
     );
 
     setState(() {
-      _isLoading = true;
+      _isLoading = false;
     });
-    if (res != "success") {
-      showSnackBar(context, res);
+    if (res == "success") {
+      showSnackBar(context, "Kayıt olundu");
+      Timer(
+        const Duration(seconds: 2),
+        () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const LoginPage(),
+            ),
+          );
+        },
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+            webScreenLayout: WebScreenLayout(),
+            mobileScreenLayout: MobileScreenLayout(),
+          ),
+        ),
+      );
     }
   }
 }
