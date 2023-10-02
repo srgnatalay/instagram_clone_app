@@ -6,8 +6,8 @@ class UserModel {
   final String photoUrl;
   final String username;
   final String bio;
-  final List followers;
-  final List following;
+  // final List followers;
+  // final List following;
 
   UserModel({
     required this.email,
@@ -15,8 +15,8 @@ class UserModel {
     required this.photoUrl,
     required this.username,
     required this.bio,
-    required this.followers,
-    required this.following,
+    // required this.followers,
+    // required this.following,
   });
 
   Map<String, dynamic> toJson() => {
@@ -24,8 +24,8 @@ class UserModel {
         "uid": uid,
         "email": email,
         "bio": bio,
-        "followes": [],
-        "following": [],
+        // "followes": [],
+        // "following": [],
         "photoUrl": photoUrl,
       };
 
@@ -38,8 +38,8 @@ class UserModel {
       email: snapshot["email"],
       photoUrl: snapshot["photoUrl"],
       bio: snapshot["bio"],
-      followers: snapshot["followers"],
-      following: snapshot["following"],
+      // followers: snapshot["followers"],
+      // following: snapshot["following"],
     );
   }
 }

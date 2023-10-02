@@ -42,8 +42,8 @@ class AuthMethods {
           uid: credential.user!.uid,
           email: email,
           bio: bio,
-          followers: [],
-          following: [],
+          // followers: [],
+          // following: [],
           photoUrl: photoUrl,
         );
 
