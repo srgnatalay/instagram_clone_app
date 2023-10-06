@@ -23,11 +23,12 @@ class FireStoreMethods {
       String postId = const Uuid().v1();
 
       Post post = Post(
+        username: username,
         description: description,
         uid: uid,
         photoUrl: photoUrl,
         postId: postId,
-        datePublished: DateTime.now().toString(),
+        datePublished: Timestamp.fromDate(DateTime.now()),
         postUrl: photoUrl,
         profileImg: profileImg,
         likes: [],
@@ -39,5 +40,23 @@ class FireStoreMethods {
       res = e.toString();
     }
     return res;
+  }
+
+  Future<void> likePost(String postId, String uid, List likes) async {
+    try {
+      if (likes.contains(uid)) {
+        await _firestore.collection("posts").doc(postId).update({
+          "likes": FieldValue.arrayRemove([uid]),
+        });
+      } else {
+        await _firestore.collection("posts").doc(postId).update({
+          "likes": FieldValue.arrayUnion([uid]),
+        });
+      }
+    } catch (e) {
+      print(
+        e.toString(),
+      );
+    }
   }
 }
