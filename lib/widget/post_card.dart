@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone_app/models/user.dart';
+import 'package:instagram_clone_app/pages/comment_page.dart';
 import 'package:instagram_clone_app/providers/user_provider.dart';
 import 'package:instagram_clone_app/resources/firestore_methods.dart';
 import 'package:instagram_clone_app/utils/colors.dart';
+import 'package:instagram_clone_app/utils/utils.dart';
 import 'package:instagram_clone_app/widget/like_animation.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +24,13 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
+  int commentLenght = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getComments();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +86,11 @@ class _PostCardState extends State<PostCard> {
                           ]
                               .map(
                                 (e) => InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    FireStoreMethods()
+                                        .postDelete(widget.snap["postId"]);
+                                    Navigator.pop(context);
+                                  },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 12, horizontal: 16),
@@ -161,7 +175,14 @@ class _PostCardState extends State<PostCard> {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CommentPage(
+                      snap: widget.snap,
+                    ),
+                  ),
+                ),
                 icon: const Icon(FluentIcons.comment_12_regular),
               ),
               IconButton(
@@ -217,9 +238,10 @@ class _PostCardState extends State<PostCard> {
                     padding: const EdgeInsets.symmetric(
                       vertical: 4,
                     ),
-                    child: const Text(
-                      "34 yorumun tümünü gör",
-                      style: TextStyle(fontSize: 15, color: secondaryColor),
+                    child: Text(
+                      "$commentLenght yorumun tümünü gör",
+                      style:
+                          const TextStyle(fontSize: 15, color: secondaryColor),
                     ),
                   ),
                 ),
@@ -239,5 +261,20 @@ class _PostCardState extends State<PostCard> {
         ],
       ),
     );
+  }
+
+  void getComments() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection("posts")
+          .doc(widget.snap["postId"])
+          .collection("comments")
+          .get();
+
+      commentLenght = snap.docs.length;
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+    setState(() {});
   }
 }

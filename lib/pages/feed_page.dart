@@ -22,11 +22,12 @@ class FeedPage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                FluentIcons.chat_12_regular,
-                size: 28,
-              ))
+            onPressed: () {},
+            icon: const Icon(
+              FluentIcons.chat_12_regular,
+              size: 28,
+            ),
+          ),
         ],
       ),
       body: StreamBuilder(
